@@ -146,7 +146,8 @@ schemas:
           "description": "A single orderLine",
           "properties": {
               "id": { "type": "string", "required": true, "title": "id" },
-              "product": { "type": "object", "$ref": "#/schemas/product", "required": true, "title": "product" },
+              "productUUID": { "type": "string", "required": true, "title": "productUUID" },
+              "productType": { "type": "string", "required": true, "title": "productType" },
               "orderedQuantity": { "type": "integer", "required": true, "title": "orderedQuantity" },
               "order": { "type": "object", "$ref": "#/schemas/order", "required": false, "title": "order" },
               "filledQuantity": { "type": "integer", "required": true, "title": "filledQuantity" }
@@ -168,18 +169,18 @@ schemas:
           }
       }
 
-  - product: |
+  - globalProduct: |
       {   "type": "object",
           "$schema": "http://json-schema.org/draft-03/schema",
-          "title": "Product",
-          "description": "A single product",
+          "title": "Global Product",
+          "description": "A single global product",
           "properties": {
               "id": { "type": "string", "required": true, "title": "id" },
               "code": { "type": "string", "required": true, "title": "code" },
               "primaryName": { "type": "string", "required": true, "title": "primaryName" },
               "dispensingUnit": { "type": "string", "required": true, "title": "dispensingUnit" },
               "dosesPerDispensingUnit": { "type": "integer", "required": true, "title": "dosesPerDispensingUnit" },
-              "packSize": { "type": "integer", "required": true, "title": "packSize" },
+              "defaultPackSize": { "type": "integer", "required": true, "title": "defaultPackSize" },
               "packRoundingThreshold": { "type": "integer", "required": true, "title": "packRoundingThreshold" },
               "roundToZero": { "type": "boolean", "required": true, "title": "roundToZero" },
               "active": { "type": "boolean", "required": true, "title": "active" },
@@ -187,6 +188,26 @@ schemas:
               "tracer": { "type": "boolean", "required": true, "title": "tracer" }
           }
       }
+
+  - tradeItem: |
+          {   "type": "object",
+              "$schema": "http://json-schema.org/draft-03/schema",
+              "title": "Trade Item",
+              "description": "A single trade item",
+              "properties": {
+                  "id": { "type": "string", "required": true, "title": "id" },
+                  "code": { "type": "string", "required": true, "title": "code" },
+                  "primaryName": { "type": "string", "required": true, "title": "primaryName" },
+                  "dispensingUnit": { "type": "string", "required": true, "title": "dispensingUnit" },
+                  "dosesPerDispensingUnit": { "type": "integer", "required": true, "title": "dosesPerDispensingUnit" },
+                  "packSize": { "type": "integer", "required": true, "title": "defaultPackSize" },
+                  "packRoundingThreshold": { "type": "integer", "required": true, "title": "packRoundingThreshold" },
+                  "roundToZero": { "type": "boolean", "required": true, "title": "roundToZero" },
+                  "active": { "type": "boolean", "required": true, "title": "active" },
+                  "fullSupply": { "type": "boolean", "required": true, "title": "fullSupply" },
+                  "tracer": { "type": "boolean", "required": true, "title": "tracer" }
+              }
+          }
 
   - productCategory: |
       {   "type": "object",
@@ -225,7 +246,8 @@ schemas:
           "properties": {
               "id": { "type": "string", "required": true, "title": "id" },
               "program": { "type": "object", "$ref": "#/schemas/program", "required": true, "title": "program" },
-              "product": { "type": "object", "$ref": "#/schemas/product", "required": true, "title": "product" },
+              "globalProductUUID": { "type": "string", "required": false, "title": "globalProductUUID" },
+              "tradeItemUUID": { "type": "string", "required": false, "title": "tradeItemUUID" },
               "dosesPerMonth": { "type": "integer", "required": true, "title": "dosesPerMonth" },
               "active": { "type": "boolean", "required": true, "title": "active" },
               "productCategory": { "type": "object", "$ref": "#/schemas/productCategory", "required": true, "title": "productCategory" },
@@ -261,7 +283,8 @@ schemas:
           "properties": {
               "id": { "type": "string", "required": true, "title": "id" },
               "requisition": { "type": "object", "$ref": "#/schemas/requisition", "required": true, "title": "requisition" },
-              "product": { "type": "object", "$ref": "#/schemas/product", "required": true, "title": "product" },
+              "productUUID": { "type": "string", "required": true, "title": "productUUID" },
+              "productType": { "type": "string", "required": true, "title": "productType" },
               "quantityRequested": { "type": "integer", "required": false, "title": "quantityRequested" },
               "stockInHand": { "type": "integer", "required": false, "title": "stockInHand" },
               "beginningBalance": { "type": "integer", "required": false, "title": "beginningBalance" }
@@ -406,7 +429,8 @@ schemas:
           "properties": {
               "id": { "type": "string", "required": true, "title": "id" },
               "stockInventory": { "type": "object", "$ref": "#/schemas/stockInventory", "required": true },
-              "product": { "type": "object", "$ref": "#/schemas/product", "required": true },
+              "productUUID": { "type": "string", "required": true, "title": "productUUID" },
+              "productType": { "type": "string", "required": true, "title": "productType" },
               "storedQuantity": { "type": "integer", "required": false, "title": "storedQuantity" }
           }
       }
@@ -695,7 +719,7 @@ resourceTypes:
                         headers:
                           X-Content-Type-Options:
                           X-XSS-Protection:
-                          
+
     /{id}/print:
         uriParameters:
             id:
