@@ -36,6 +36,11 @@ public class FacilityType extends BaseEntity {
   @Setter
   private Boolean active;
 
+  /**
+   * Returns a created facility type with only the required parameters set to dummy values.
+   *
+   * @return a mock facility type
+   */
   public static FacilityType getMockFacilityType() {
     FacilityType ft = new FacilityType();
 

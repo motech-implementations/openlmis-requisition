@@ -41,7 +41,6 @@ public class RequisitionControllerTest {
     UUID facilityId = UUID.randomUUID();
     UUID programId = UUID.randomUUID();
     UUID processingPeriodId = UUID.randomUUID();
-    boolean emergency = false;
     RequisitionInitiateDto reqDto = new RequisitionInitiateDto();
     reqDto.setFacilityId(facilityId);
     reqDto.setProgramId(programId);
@@ -54,12 +53,12 @@ public class RequisitionControllerTest {
     initiatedRequisition.setProcessingPeriod(Period.getMockProcessingPeriod());
 
     when(requisitionService.initiateRequisition(facilityId, programId, processingPeriodId, 
-        emergency)).thenReturn(initiatedRequisition);
+        false)).thenReturn(initiatedRequisition);
 
     ResponseEntity response = controller.initiateRequisition(reqDto, null);
 
     verify(requisitionService).initiateRequisition(facilityId, programId, processingPeriodId,
-        emergency);
+        false);
     assertThat(response.getBody(), is(initiatedRequisition));
     assertThat(response.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
   }

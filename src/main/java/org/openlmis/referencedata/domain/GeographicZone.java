@@ -51,7 +51,12 @@ public class GeographicZone extends BaseEntity {
   @Getter
   @Setter
   private Double longitude;
-  
+
+  /**
+   * Returns a created geographic zone with only the required parameters set to dummy values.
+   *
+   * @return a mock geographic zone
+   */
   public static GeographicZone getMockGeographicZone() {
     GeographicZone gz = new GeographicZone();
 

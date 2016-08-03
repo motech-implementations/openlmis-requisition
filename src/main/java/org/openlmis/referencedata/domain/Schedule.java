@@ -48,6 +48,11 @@ public class Schedule extends BaseEntity {
     this.modifiedDate = LocalDateTime.now();
   }
 
+  /**
+   * Returns a created processing schedule with only the required parameters set to dummy values.
+   *
+   * @return a mock processing schedule
+   */
   public static Schedule getMockProcessingSchedule() {
     Schedule ps = new Schedule();
     

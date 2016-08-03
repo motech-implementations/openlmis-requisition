@@ -52,6 +52,11 @@ public class Period extends BaseEntity {
   @Setter
   private LocalDate endDate;
 
+  /**
+   * Returns a created processing period with only the required parameters set to dummy values.
+   *
+   * @return a mock processing period
+   */
   public static Period getMockProcessingPeriod() {
     Period pp = new Period();
     

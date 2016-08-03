@@ -28,6 +28,11 @@ public class GeographicLevel extends BaseEntity {
   @Setter
   private Integer levelNumber;
 
+  /**
+   * Returns a created geographic level with only the required parameters set to dummy values.
+   *
+   * @return a mock geographic level
+   */
   public static GeographicLevel getMockGeographicLevel() {
     GeographicLevel gl = new GeographicLevel();
 

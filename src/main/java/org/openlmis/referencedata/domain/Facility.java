@@ -87,16 +87,21 @@ public class Facility extends BaseEntity {
   @Getter
   @Setter
   private List<Program> supportedPrograms;
-  
-  public static Facility getMockFacility() {
-    Facility f = new Facility();
 
-    f.setCode("F1");
-    f.setGeographicZone(GeographicZone.getMockGeographicZone());
-    f.setType(FacilityType.getMockFacilityType());
-    f.setActive(true);
-    f.setEnabled(true);
+  /**
+   * Returns a created facility with only the required parameters set to dummy values.
+   * 
+   * @return a mock facility
+   */
+  public static Facility getMockFacility() {
+    Facility facility = new Facility();
+
+    facility.setCode("F1");
+    facility.setGeographicZone(GeographicZone.getMockGeographicZone());
+    facility.setType(FacilityType.getMockFacilityType());
+    facility.setActive(true);
+    facility.setEnabled(true);
     
-    return f;
+    return facility;
   }
 }

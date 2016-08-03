@@ -65,7 +65,10 @@ public class RequisitionService {
   /**
    * Initiated given requisition if possible.
    *
-   * @param requisitionDto Requisition object to initiate.
+   * @param facilityId Facility UUID for requisition.
+   * @param programId Program UUID for requisition.
+   * @param processingPeriodId Processing Period UUID for requisition.
+   * @param emergency If requisition is an emergency requisition.
    * @return Initiated requisition.
    * @throws RequisitionException Exception thrown when
    *      it is not possible to initialize a requisition.
@@ -74,19 +77,19 @@ public class RequisitionService {
       processingPeriodId, boolean emergency)
                                           throws RequisitionException {
 
-    Facility f = new Facility();
-    Program p = new Program();
+    Facility facility = new Facility();
+    Program program = new Program();
     Period pp = new Period();
-    f.setId(facilityId);
-    p.setId(programId);
+    facility.setId(facilityId);
+    program.setId(programId);
     pp.setId(processingPeriodId);
 
     Requisition initiated = requisitionRepository.findByProcessingPeriodAndFacilityAndProgram(pp,
-        f, p);
+        facility, program);
     if (initiated == null) {
       initiated = new Requisition();
-      initiated.setFacility(f);
-      initiated.setProgram(p);
+      initiated.setFacility(facility);
+      initiated.setProgram(program);
       initiated.setProcessingPeriod(pp);
       initiated.setStatus(RequisitionStatus.INITIATED);
       initiated.setEmergency(emergency);
