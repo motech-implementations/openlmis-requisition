@@ -36,11 +36,11 @@ import javax.persistence.criteria.Root;
 
 @Service
 public class RequisitionService {
-  private final String requisitionNullMessage = "requisition cannot be null";
-  private final String requisitionNotExistsMessage = "Requisition does not exists: ";
-  private final String requisitionBadStatusMessage = "requisition has bad status";
+  private static final String REQUISITION_NULL_MESSAGE = "requisition cannot be null";
+  private static final String REQUISITION_DOES_NOT_EXISTS_MESSAGE = "Requisition does not exist: ";
+  private static final String REQUISITION_BAD_STATUS_MESSAGE = "requisition has bad status";
 
-  private Logger logger = LoggerFactory.getLogger(RequisitionService.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(RequisitionService.class);
 
   @Autowired
   private RequisitionRepository requisitionRepository;
@@ -52,13 +52,14 @@ public class RequisitionService {
   private RequisitionLineService requisitionLineService;
 
   @Autowired
-  private ConfigurationSettingService configurationSettingService;
+  private RequisitionLineRepository requisitionLineRepository;
+
 
   @Autowired
-  RequisitionLineRepository requisitionLineRepository;
+  private ConfigurationSettingService configurationSettingService;
 
   @PersistenceContext
-  EntityManager entityManager;
+  private EntityManager entityManager;
 
   /**
    * Initiated given requisition if possible.
@@ -77,7 +78,11 @@ public class RequisitionService {
 
       requisitionDto.setStatus(RequisitionStatus.INITIATED);
       requisitionLineService.initiateRequisitionLineFields(requisitionDto);
+
+      requisitionDto.getRequisitionLines().forEach(
+          requisitionLine -> requisitionLineRepository.save(requisitionLine));
       requisitionRepository.save(requisitionDto);
+
     } else {
       throw new RequisitionException("Cannot initiate requisition."
           + " Requisition with such parameters already exists");
@@ -98,15 +103,15 @@ public class RequisitionService {
     Requisition initiatedRequisition = requisitionRepository.findOne(requisition.getId());
 
     if (initiatedRequisition == null) {
-      throw new RequisitionException(requisitionNotExistsMessage + requisition.getId());
+      throw new RequisitionException(REQUISITION_DOES_NOT_EXISTS_MESSAGE + requisition.getId());
     } else if (requisition.getStatus() != RequisitionStatus.INITIATED) {
       throw new RequisitionException("Cannot submit requisition: "
           + requisition.getId() + ". Requisition must have status 'INITIATED' to be submitted.");
     } else {
-      logger.debug("Submitting a requisition with id " + requisition.getId());
+      LOGGER.debug("Submitting a requisition with id " + requisition.getId());
       requisition.setStatus(RequisitionStatus.SUBMITTED);
       requisitionRepository.save(requisition);
-      logger.debug("Requisition with id " + requisition.getId() + " submitted");
+      LOGGER.debug("Requisition with id " + requisition.getId() + " submitted");
       return requisition;
     }
   }
@@ -122,12 +127,12 @@ public class RequisitionService {
     Requisition requisition = requisitionRepository.findOne(requisitionId);
 
     if (requisition == null) {
-      throw new RequisitionException(requisitionNotExistsMessage + requisitionId);
+      throw new RequisitionException(REQUISITION_DOES_NOT_EXISTS_MESSAGE + requisitionId);
     } else if (requisition.getStatus() != RequisitionStatus.INITIATED) {
-      logger.debug("Delete failed - " + requisitionBadStatusMessage);
+      LOGGER.debug("Delete failed - " + REQUISITION_BAD_STATUS_MESSAGE);
     } else {
       requisitionRepository.delete(requisition);
-      logger.debug("Requisition deleted");
+      LOGGER.debug("Requisition deleted");
       return true;
     }
 
@@ -138,27 +143,26 @@ public class RequisitionService {
    * Skip given requisition if possible.
    *
    * @param requisitionId UUID of Requisition to be skipped.
-   * @return True if skip operation was successful, false otherwise.
+   * @return Skipped Requisition.
+   * @throws RequisitionException Exception thrown when it is not possible to skip a requisition.
    */
-  public boolean skip(UUID requisitionId) {
+  public Requisition skip(UUID requisitionId) throws RequisitionException {
     Requisition requisition = requisitionRepository.findOne(requisitionId);
 
     if (requisition == null) {
-      logger.debug("Skip failed - "
-          + requisitionNullMessage);
+      throw new RequisitionException("Skip failed - "
+          + REQUISITION_NULL_MESSAGE);
     } else if (requisition.getStatus() != RequisitionStatus.INITIATED) {
-      logger.debug("Skip failed - "
-          + requisitionBadStatusMessage);
+      throw new RequisitionException("Skip failed - "
+          + REQUISITION_BAD_STATUS_MESSAGE);
     } else if (!requisition.getProgram().getPeriodsSkippable()) {
-      logger.debug("Skip failed - "
+      throw new RequisitionException("Skip failed - "
               + "requisition program does not allow skipping");
     } else {
-      logger.debug("Requisition skipped");
+      LOGGER.info("Requisition skipped");
       requisition.setStatus(RequisitionStatus.SKIPPED);
-      requisitionRepository.save(requisition);
-      return true;
+      return requisitionRepository.save(requisition);
     }
-    return false;
   }
 
   /**
@@ -171,12 +175,12 @@ public class RequisitionService {
 
     Requisition requisition = requisitionRepository.findOne(requisitionId);
     if (requisition == null) {
-      throw new RequisitionException(requisitionNotExistsMessage + requisitionId);
+      throw new RequisitionException(REQUISITION_DOES_NOT_EXISTS_MESSAGE + requisitionId);
     } else if (requisition.getStatus() != RequisitionStatus.AUTHORIZED) {
-      throw new RequisitionException("Cannot reject requisition: " + requisitionId 
+      throw new RequisitionException("Cannot reject requisition: " + requisitionId
           + " .Requisition must be waiting for approval to be rejected");
     } else {
-      logger.debug("Requisition rejected: " + requisitionId);
+      LOGGER.debug("Requisition rejected: " + requisitionId);
       requisition.setStatus(RequisitionStatus.INITIATED);
       requisitionRepository.save(requisition);
     }
@@ -297,7 +301,7 @@ public class RequisitionService {
     }
     Requisition requisition = requisitionRepository.findOne(requisitionId);
     if (requisition == null) {
-      throw new RequisitionException(requisitionNotExistsMessage + requisitionId);
+      throw new RequisitionException(REQUISITION_DOES_NOT_EXISTS_MESSAGE + requisitionId);
     } else if (requisition.getStatus() != RequisitionStatus.SUBMITTED) {
       throw new RequisitionException("Cannot authorize requisition: " + requisitionId
         + " . Requisition must have submitted status to be authorized");

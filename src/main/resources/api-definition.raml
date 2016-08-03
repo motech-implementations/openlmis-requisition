@@ -190,24 +190,24 @@ schemas:
       }
 
   - tradeItem: |
-          {   "type": "object",
-              "$schema": "http://json-schema.org/draft-03/schema",
+      {   "type": "object",
+          "$schema": "http://json-schema.org/draft-03/schema",
               "title": "Trade Item",
               "description": "A single trade item",
-              "properties": {
-                  "id": { "type": "string", "required": true, "title": "id" },
-                  "code": { "type": "string", "required": true, "title": "code" },
-                  "primaryName": { "type": "string", "required": true, "title": "primaryName" },
-                  "dispensingUnit": { "type": "string", "required": true, "title": "dispensingUnit" },
-                  "dosesPerDispensingUnit": { "type": "integer", "required": true, "title": "dosesPerDispensingUnit" },
+          "properties": {
+              "id": { "type": "string", "required": true, "title": "id" },
+              "code": { "type": "string", "required": true, "title": "code" },
+              "primaryName": { "type": "string", "required": true, "title": "primaryName" },
+              "dispensingUnit": { "type": "string", "required": true, "title": "dispensingUnit" },
+              "dosesPerDispensingUnit": { "type": "integer", "required": true, "title": "dosesPerDispensingUnit" },
                   "packSize": { "type": "integer", "required": true, "title": "defaultPackSize" },
-                  "packRoundingThreshold": { "type": "integer", "required": true, "title": "packRoundingThreshold" },
-                  "roundToZero": { "type": "boolean", "required": true, "title": "roundToZero" },
-                  "active": { "type": "boolean", "required": true, "title": "active" },
-                  "fullSupply": { "type": "boolean", "required": true, "title": "fullSupply" },
-                  "tracer": { "type": "boolean", "required": true, "title": "tracer" }
-              }
+              "packRoundingThreshold": { "type": "integer", "required": true, "title": "packRoundingThreshold" },
+              "roundToZero": { "type": "boolean", "required": true, "title": "roundToZero" },
+              "active": { "type": "boolean", "required": true, "title": "active" },
+              "fullSupply": { "type": "boolean", "required": true, "title": "fullSupply" },
+              "tracer": { "type": "boolean", "required": true, "title": "tracer" }
           }
+      }
 
   - productCategory: |
       {   "type": "object",
@@ -409,32 +409,6 @@ schemas:
           }
       }
 
-  - stockInventory: |
-      {   "type": "object",
-          "$schema": "http://json-schema.org/draft-03/schema",
-          "title": "StockInventory",
-          "description": "A single stockInventory",
-          "properties": {
-              "id": { "type": "string", "required": true, "title": "id" },
-              "name": { "type": "string", "required": true, "title": "name" },
-              "stocks": { "type": "array", "required": false, "title": "stocks", "items": { "type": "object", "$ref": "#/schemas/stock" }, "uniqueItems": false }
-          }
-      }
-
-  - stock: |
-      {   "type": "object",
-          "$schema": "http://json-schema.org/draft-03/schema",
-          "title": "Stock",
-          "description": "A single stock",
-          "properties": {
-              "id": { "type": "string", "required": true, "title": "id" },
-              "stockInventory": { "type": "object", "$ref": "#/schemas/stockInventory", "required": true },
-              "productUUID": { "type": "string", "required": true, "title": "productUUID" },
-              "productType": { "type": "string", "required": true, "title": "productType" },
-              "storedQuantity": { "type": "integer", "required": false, "title": "storedQuantity" }
-          }
-      }
-
   - requisitionGroup: |
       {   "type": "object",
           "$schema": "http://json-schema.org/draft-03/schema",
@@ -498,6 +472,18 @@ schemas:
               "quantityReturned": { "type": "integer", "required": false, "title": "quantityReturned" },
               "replacedProductCode": { "type": "string", "required": false, "title": "replacedProductCode" },
               "notes": { "type": "string", "required": false, "title": "notes" }
+          }
+      }
+
+  - programDto: |
+      {   "type": "object",
+          "$schema": "http://json-schema.org/draft-03/schema",
+          "title": "ProgramDto",
+          "description": "A single programDto",
+          "properties": {
+              "id": { "type": "string", "required": true, "title": "id" },
+              "code": { "type": "string", "required": true, "title": "code" },
+              "name": { "type": "string", "required": false, "title": "name" }
           }
       }
 
@@ -719,7 +705,7 @@ resourceTypes:
                         headers:
                           X-Content-Type-Options:
                           X-XSS-Protection:
-
+                          
     /{id}/print:
         uriParameters:
             id:
@@ -753,6 +739,25 @@ resourceTypes:
                     headers:
                       X-Content-Type-Options:
                       X-XSS-Protection:
+    /{id}/finalizeOrder:
+            uriParameters:
+                id:
+                    displayName: orderId
+                    type: string
+                    required: true
+                    repeat: false
+            put:
+                is: [ secured ]
+                description: Finalize chosen order.
+                responses:
+                    "200":
+                        headers:
+                          X-Content-Type-Options:
+                          X-XSS-Protection:
+                    "400":
+                        headers:
+                          X-Content-Type-Options:
+                          X-XSS-Protection:
 
 /periods:
     displayName: Period
@@ -1098,7 +1103,7 @@ resourceTypes:
                       X-Content-Type-Options:
                       X-XSS-Protection:
 
-    /requisitions/{id}/approve:
+    /{id}/approve:
         uriParameters:
             id:
                 displayName: id
@@ -1136,7 +1141,7 @@ resourceTypes:
                       X-Content-Type-Options:
                       X-XSS-Protection:
 
-    /requisitions/{id}/comments:
+    /{id}/comments:
         uriParameters:
             id:
                 displayName: id
@@ -1550,3 +1555,24 @@ resourceTypes:
                   headers:
                     X-Content-Type-Options:
                     X-XSS-Protection:
+
+/programs:
+    displayName: Program
+    /update:
+        put:
+            is: [ secured ]
+            description: Update program code and name.
+            body:
+                application/json:
+                    schema: programDto
+            responses:
+                "200":
+                    headers:
+                      X-Content-Type-Options:
+                      X-XSS-Protection:
+                    body:
+                      application/json:
+                "400":
+                    headers:
+                      X-Content-Type-Options:
+                      X-XSS-Protection:
