@@ -80,9 +80,10 @@ public class RequisitionLineService {
 
   private void initiateBeginningBalance(Requisition requisition,
                                         RequisitionTemplate requisitionTemplate) {
+    Period currentPeriod = periodRepository.findOne(requisition.getProcessingPeriod().getId());
     Iterable<Period> previousPeriods = periodRepository.findPreviousPeriods(
-        requisition.getProcessingPeriod().getProcessingSchedule(),
-        requisition.getProcessingPeriod().getStartDate());
+        currentPeriod.getProcessingSchedule(),
+        currentPeriod.getStartDate());
 
     if (requisitionTemplate.getColumnsMap().get("beginningBalance").getIsDisplayed()
         && previousPeriods != null && previousPeriods.iterator().hasNext()) {

@@ -35,4 +35,12 @@ public class FacilityType extends BaseEntity {
   @Getter
   @Setter
   private Boolean active;
+
+  public static FacilityType getMockFacilityType() {
+    FacilityType ft = new FacilityType();
+
+    ft.setCode("FT1");
+
+    return ft;
+  }
 }

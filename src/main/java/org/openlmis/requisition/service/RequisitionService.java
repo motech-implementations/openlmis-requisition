@@ -7,6 +7,7 @@ import org.openlmis.hierarchyandsupervision.domain.User;
 import org.openlmis.hierarchyandsupervision.repository.UserRepository;
 import org.openlmis.referencedata.domain.Comment;
 import org.openlmis.referencedata.domain.Facility;
+import org.openlmis.referencedata.domain.Period;
 import org.openlmis.referencedata.domain.Program;
 import org.openlmis.requisition.domain.Requisition;
 import org.openlmis.requisition.domain.RequisitionLine;
@@ -69,26 +70,38 @@ public class RequisitionService {
    * @throws RequisitionException Exception thrown when
    *      it is not possible to initialize a requisition.
    */
-  public Requisition initiateRequisition(Requisition requisitionDto)
+  public Requisition initiateRequisition(UUID facilityId, UUID programId, UUID 
+      processingPeriodId, boolean emergency)
                                           throws RequisitionException {
 
-    if (requisitionDto == null) {
-      throw new RequisitionException("Requisition cannot be initiated with null object");
-    } else if (requisitionRepository.findOne(requisitionDto.getId()) == null) {
+    Facility f = new Facility();
+    Program p = new Program();
+    Period pp = new Period();
+    f.setId(facilityId);
+    p.setId(programId);
+    pp.setId(processingPeriodId);
 
-      requisitionDto.setStatus(RequisitionStatus.INITIATED);
-      requisitionLineService.initiateRequisitionLineFields(requisitionDto);
+    Requisition initiated = requisitionRepository.findByProcessingPeriodAndFacilityAndProgram(pp,
+        f, p);
+    if (initiated == null) {
+      initiated = new Requisition();
+      initiated.setFacility(f);
+      initiated.setProgram(p);
+      initiated.setProcessingPeriod(pp);
+      initiated.setStatus(RequisitionStatus.INITIATED);
+      initiated.setEmergency(emergency);
+      requisitionLineService.initiateRequisitionLineFields(initiated);
 
-      requisitionDto.getRequisitionLines().forEach(
+      initiated.getRequisitionLines().forEach(
           requisitionLine -> requisitionLineRepository.save(requisitionLine));
-      requisitionRepository.save(requisitionDto);
+      requisitionRepository.save(initiated);
 
     } else {
       throw new RequisitionException("Cannot initiate requisition."
           + " Requisition with such parameters already exists");
     }
 
-    return requisitionDto;
+    return initiated;
   }
 
   /**
@@ -177,7 +190,7 @@ public class RequisitionService {
     if (requisition == null) {
       throw new RequisitionException(REQUISITION_DOES_NOT_EXISTS_MESSAGE + requisitionId);
     } else if (requisition.getStatus() != RequisitionStatus.AUTHORIZED) {
-      throw new RequisitionException("Cannot reject requisition: " + requisitionId
+      throw new RequisitionException("Cannot reject requisition: " + requisitionId 
           + " .Requisition must be waiting for approval to be rejected");
     } else {
       LOGGER.debug("Requisition rejected: " + requisitionId);

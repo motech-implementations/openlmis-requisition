@@ -51,4 +51,13 @@ public class GeographicZone extends BaseEntity {
   @Getter
   @Setter
   private Double longitude;
+  
+  public static GeographicZone getMockGeographicZone() {
+    GeographicZone gz = new GeographicZone();
+
+    gz.setCode("GZ1");
+    gz.setLevel(GeographicLevel.getMockGeographicLevel());
+    
+    return gz;
+  }
 }

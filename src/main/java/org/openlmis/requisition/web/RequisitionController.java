@@ -9,6 +9,7 @@ import org.openlmis.referencedata.domain.Program;
 import org.openlmis.referencedata.repository.CommentRepository;
 import org.openlmis.requisition.domain.Requisition;
 import org.openlmis.requisition.domain.RequisitionStatus;
+import org.openlmis.requisition.dto.RequisitionInitiateDto;
 import org.openlmis.requisition.exception.RequisitionException;
 import org.openlmis.requisition.repository.RequisitionRepository;
 import org.openlmis.requisition.service.RequisitionService;
@@ -73,12 +74,21 @@ public class RequisitionController {
    * @return result
    */
   @RequestMapping(value = "/requisitions/initiate", method = POST)
-  public ResponseEntity<?> initiateRequisition(@RequestBody @Valid Requisition requisitionDto,
+  public ResponseEntity<?> initiateRequisition(@RequestBody RequisitionInitiateDto reqDto,
                                                BindingResult bindingResult) {
     try {
-
-      Requisition requisition = requisitionService.initiateRequisition(
-          requisitionDto);
+      
+      if (reqDto == null || reqDto.getFacilityId() == null || reqDto.getProgramId() == null 
+          || reqDto.getProcessingPeriodId() == null) {
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+      }
+      
+      if (reqDto.getEmergency() == null) {
+        reqDto.setEmergency(false);
+      }
+      
+      Requisition requisition = requisitionService.initiateRequisition(reqDto.getFacilityId(), 
+          reqDto.getProgramId(), reqDto.getProcessingPeriodId(), reqDto.getEmergency());
       ResponseEntity response = new ResponseEntity<>(requisition, HttpStatus.CREATED);
       return response;
 

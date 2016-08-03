@@ -48,4 +48,13 @@ public class Program extends BaseEntity {
       this.periodsSkippable = false;
     }
   }
+  
+  public static Program getMockProgram() {
+    Program p = new Program();
+    
+    p.setCode("P1");
+    p.setPeriodsSkippable(true);
+    
+    return p;
+  }
 }

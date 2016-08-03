@@ -27,4 +27,13 @@ public class GeographicLevel extends BaseEntity {
   @Getter
   @Setter
   private Integer levelNumber;
+
+  public static GeographicLevel getMockGeographicLevel() {
+    GeographicLevel gl = new GeographicLevel();
+
+    gl.setCode("GL1");
+    gl.setLevelNumber(1);
+
+    return gl;
+  }
 }

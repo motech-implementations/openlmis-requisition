@@ -48,4 +48,12 @@ public class Schedule extends BaseEntity {
     this.modifiedDate = LocalDateTime.now();
   }
 
+  public static Schedule getMockProcessingSchedule() {
+    Schedule ps = new Schedule();
+    
+    ps.setCode("PS1");
+    ps.setName("Monthly");
+    
+    return ps;
+  }
 }

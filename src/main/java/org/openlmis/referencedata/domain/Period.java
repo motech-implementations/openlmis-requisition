@@ -52,4 +52,13 @@ public class Period extends BaseEntity {
   @Setter
   private LocalDate endDate;
 
+  public static Period getMockProcessingPeriod() {
+    Period pp = new Period();
+    
+    pp.setProcessingSchedule(Schedule.getMockProcessingSchedule());
+    pp.setName("PP1");
+    pp.setStartDate(LocalDate.now());
+    
+    return pp;
+  }
 }

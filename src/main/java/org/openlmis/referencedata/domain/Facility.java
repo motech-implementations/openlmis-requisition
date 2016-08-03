@@ -21,7 +21,7 @@ import javax.persistence.Table;
 public class Facility extends BaseEntity {
 
   public static final String TEXT = "text";
-
+  
   @Column(nullable = false, unique = true, columnDefinition = TEXT)
   @Getter
   @Setter
@@ -87,4 +87,16 @@ public class Facility extends BaseEntity {
   @Getter
   @Setter
   private List<Program> supportedPrograms;
+  
+  public static Facility getMockFacility() {
+    Facility f = new Facility();
+
+    f.setCode("F1");
+    f.setGeographicZone(GeographicZone.getMockGeographicZone());
+    f.setType(FacilityType.getMockFacilityType());
+    f.setActive(true);
+    f.setEnabled(true);
+    
+    return f;
+  }
 }
