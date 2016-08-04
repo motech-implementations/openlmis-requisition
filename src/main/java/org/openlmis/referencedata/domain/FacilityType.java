@@ -41,7 +41,7 @@ public class FacilityType extends BaseEntity {
    *
    * @return a mock facility type
    */
-  public static FacilityType getMockFacilityType() {
+  public static FacilityType getTestFacilityType() {
     FacilityType ft = new FacilityType();
 
     ft.setCode("FT1");

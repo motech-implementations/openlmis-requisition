@@ -57,11 +57,11 @@ public class GeographicZone extends BaseEntity {
    *
    * @return a mock geographic zone
    */
-  public static GeographicZone getMockGeographicZone() {
+  public static GeographicZone getTestGeographicZone() {
     GeographicZone gz = new GeographicZone();
 
     gz.setCode("GZ1");
-    gz.setLevel(GeographicLevel.getMockGeographicLevel());
+    gz.setLevel(GeographicLevel.getTestGeographicLevel());
     
     return gz;
   }

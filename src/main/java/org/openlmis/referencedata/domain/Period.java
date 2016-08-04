@@ -57,10 +57,10 @@ public class Period extends BaseEntity {
    *
    * @return a mock processing period
    */
-  public static Period getMockProcessingPeriod() {
+  public static Period getTestProcessingPeriod() {
     Period pp = new Period();
     
-    pp.setProcessingSchedule(Schedule.getMockProcessingSchedule());
+    pp.setProcessingSchedule(Schedule.getTestProcessingSchedule());
     pp.setName("PP1");
     pp.setStartDate(LocalDate.now());
     

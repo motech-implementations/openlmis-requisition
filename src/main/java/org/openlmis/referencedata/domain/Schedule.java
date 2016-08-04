@@ -53,7 +53,7 @@ public class Schedule extends BaseEntity {
    *
    * @return a mock processing schedule
    */
-  public static Schedule getMockProcessingSchedule() {
+  public static Schedule getTestProcessingSchedule() {
     Schedule ps = new Schedule();
     
     ps.setCode("PS1");

@@ -33,7 +33,7 @@ public class GeographicLevel extends BaseEntity {
    *
    * @return a mock geographic level
    */
-  public static GeographicLevel getMockGeographicLevel() {
+  public static GeographicLevel getTestGeographicLevel() {
     GeographicLevel gl = new GeographicLevel();
 
     gl.setCode("GL1");

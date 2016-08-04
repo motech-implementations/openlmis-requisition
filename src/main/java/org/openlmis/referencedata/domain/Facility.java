@@ -93,12 +93,12 @@ public class Facility extends BaseEntity {
    * 
    * @return a mock facility
    */
-  public static Facility getMockFacility() {
+  public static Facility getTestFacility() {
     Facility facility = new Facility();
 
     facility.setCode("F1");
-    facility.setGeographicZone(GeographicZone.getMockGeographicZone());
-    facility.setType(FacilityType.getMockFacilityType());
+    facility.setGeographicZone(GeographicZone.getTestGeographicZone());
+    facility.setType(FacilityType.getTestFacilityType());
     facility.setActive(true);
     facility.setEnabled(true);
     

@@ -48,9 +48,9 @@ public class RequisitionControllerTest {
     reqDto.setEmergency(false);
 
     Requisition initiatedRequisition = new Requisition();
-    initiatedRequisition.setFacility(Facility.getMockFacility());
-    initiatedRequisition.setProgram(Program.getMockProgram());
-    initiatedRequisition.setProcessingPeriod(Period.getMockProcessingPeriod());
+    initiatedRequisition.setFacility(Facility.getTestFacility());
+    initiatedRequisition.setProgram(Program.getTestProgram());
+    initiatedRequisition.setProcessingPeriod(Period.getTestProcessingPeriod());
 
     when(requisitionService.initiateRequisition(facilityId, programId, processingPeriodId, 
         false)).thenReturn(initiatedRequisition);

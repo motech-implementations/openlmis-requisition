@@ -54,7 +54,7 @@ public class Program extends BaseEntity {
    *
    * @return a mock program
    */
-  public static Program getMockProgram() {
+  public static Program getTestProgram() {
     Program program = new Program();
     
     program.setCode("P1");
