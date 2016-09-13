@@ -54,10 +54,10 @@ public class RequisitionService {
    * @param requisitionDto Requisition object to initiate.
    * @return Initiated requisition.
    * @throws RequisitionException Exception thrown when
-   *      it is not possible to initialize a requisition.
+   *                              it is not possible to initialize a requisition.
    */
   public Requisition initiateRequisition(Requisition requisitionDto)
-                                          throws RequisitionException {
+      throws RequisitionException {
 
     if (requisitionDto == null) {
       throw new RequisitionException("Requisition cannot be initiated with null object");
@@ -143,7 +143,7 @@ public class RequisitionService {
           + REQUISITION_BAD_STATUS_MESSAGE);
     } else if (!requisition.getProgram().getPeriodsSkippable()) {
       throw new RequisitionException("Skip failed - "
-              + "requisition program does not allow skipping");
+          + "requisition program does not allow skipping");
     } else {
       LOGGER.info("Requisition skipped");
       requisition.setStatus(RequisitionStatus.SKIPPED);
@@ -182,8 +182,8 @@ public class RequisitionService {
                                               SupervisoryNode supervisoryNode,
                                               RequisitionStatus requisitionStatus) {
     return requisitionRepository.searchRequisitions(
-            facility, program, createdDateFrom,
-            createdDateTo, processingPeriod, supervisoryNode, requisitionStatus);
+        facility, program, createdDateFrom,
+        createdDateTo, processingPeriod, supervisoryNode, requisitionStatus);
   }
 
   /**
@@ -226,12 +226,12 @@ public class RequisitionService {
   /**
    * Authorize given Requisition if possible.
    *
-   * @param requisitionId UUID of Requisition to be authorized.
-   * @param requisitionDto Requisition object to be authorized.
+   * @param requisitionId    UUID of Requisition to be authorized.
+   * @param requisitionDto   Requisition object to be authorized.
    * @param validationErrors Boolean which contains information if given object is valid.
    * @return Authorized requisition.
    * @throws RequisitionException Exception thrown when
-   *      it is not possible to authorize a requisition.
+   *                              it is not possible to authorize a requisition.
    */
   public Requisition authorize(UUID requisitionId, Requisition requisitionDto,
                                boolean validationErrors) throws RequisitionException {
@@ -243,7 +243,7 @@ public class RequisitionService {
       throw new RequisitionException(REQUISITION_DOES_NOT_EXISTS_MESSAGE + requisitionId);
     } else if (requisition.getStatus() != RequisitionStatus.SUBMITTED) {
       throw new RequisitionException("Cannot authorize requisition: " + requisitionId
-        + " . Requisition must have submitted status to be authorized");
+          + " . Requisition must have submitted status to be authorized");
     } else if (requisitionDto == null || validationErrors) {
       throw new RequisitionException("Requisition object is not valid.");
     } else {
@@ -273,7 +273,7 @@ public class RequisitionService {
     if (requisition != null) {
       if (requisition.getRequisitionLines() != null) {
         for (RequisitionLine requisitionLine : requisition.getRequisitionLines()) {
-          requisitionLineService.save(requisition,requisitionLine);
+          requisitionLineService.save(requisition, requisitionLine);
         }
       }
       return requisitionRepository.save(requisition);
@@ -282,4 +282,23 @@ public class RequisitionService {
     }
   }
 
+  /**
+   * Get approved requisitions matching all of provided parameters.
+   *
+   * @param filterValue Value to be used to filter.
+   * @param filterBy Field used to filter: "programName", "facilityCode", "facilityName" or "all".
+   * @param sortBy Field used to sort: "programName", "facilityCode" or "facilityName".
+   * @param descending Descending direction for sort.
+   * @param pageNumber Page number to return.
+   * @param pageSize Quantity for one page.
+   *
+   * @return List of requisitions.
+   */
+  public List<Requisition> searchApprovedRequisitionsWithSortAndFilterAndPaging(
+      String filterValue, String filterBy, String sortBy, Boolean descending,
+      Integer pageNumber, Integer pageSize) {
+
+    return requisitionRepository.searchApprovedRequisitionsWithSortAndFilterAndPaging(
+          filterValue, filterBy, sortBy, descending, pageNumber, pageSize);
+  }
 }

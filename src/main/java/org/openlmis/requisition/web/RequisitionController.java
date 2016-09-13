@@ -1,5 +1,7 @@
 package org.openlmis.requisition.web;
 
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import org.openlmis.hierarchyandsupervision.domain.SupervisoryNode;
 import org.openlmis.hierarchyandsupervision.domain.User;
 import org.openlmis.hierarchyandsupervision.utils.ErrorResponse;
@@ -40,14 +42,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestClientException;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import javax.validation.Valid;
 
 @Controller
 @SuppressWarnings("PMD.TooManyMethods")
@@ -134,20 +135,20 @@ public class RequisitionController extends BaseController {
   /**
    * Allows updating requisitions.
    *
-   * @param requisition A requisition bound to the request body
+   * @param requisition   A requisition bound to the request body
    * @param requisitionId UUID of requisition which we want to update
    * @return ResponseEntity containing the updated requisition
    */
   @RequestMapping(value = "/requisitions/{id}", method = RequestMethod.PUT)
   public ResponseEntity<?> updateRequisition(@RequestBody Requisition requisition,
-                                       @PathVariable("id") UUID requisitionId) {
+                                             @PathVariable("id") UUID requisitionId) {
     try {
       LOGGER.debug("Updating requisition");
       Requisition requisitionToUpdate = requisitionRepository.save(requisition);
       return new ResponseEntity<Requisition>(requisitionToUpdate, HttpStatus.OK);
     } catch (DataIntegrityViolationException ex) {
       ErrorResponse errorResponse =
-            new ErrorResponse("An error accurred while updating requisition", ex.getMessage());
+          new ErrorResponse("An error accurred while updating requisition", ex.getMessage());
       LOGGER.error(errorResponse.getMessage(), ex);
       return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
@@ -199,7 +200,7 @@ public class RequisitionController extends BaseController {
       @RequestParam(value = "processingPeriod", required = false) ProcessingPeriod processingPeriod,
       @RequestParam(value = "supervisoryNode", required = false) SupervisoryNode supervisoryNode,
       @RequestParam(value = "requisitionStatus", required = false)
-              RequisitionStatus requisitionStatus) {
+          RequisitionStatus requisitionStatus) {
 
     List<Requisition> result = requisitionService.searchRequisitions(facility, program,
         createdDateFrom, createdDateTo, processingPeriod, supervisoryNode, requisitionStatus);
@@ -242,8 +243,8 @@ public class RequisitionController extends BaseController {
    * Add comment to the requisition.
    */
   @RequestMapping(value = "/requisitions/{id}/comments", method = RequestMethod.POST)
-  public ResponseEntity<Object> insertComment(@RequestBody Comment comment,
-                                         @PathVariable("id") UUID id, OAuth2Authentication auth) {
+  public ResponseEntity<Object> insertComment(@RequestBody Comment comment, @PathVariable("id")
+      UUID id, OAuth2Authentication auth) {
     Requisition requisition = requisitionRepository.findOne(id);
     comment.setRequisition(requisition);
 
@@ -272,7 +273,7 @@ public class RequisitionController extends BaseController {
   /**
    * Allows updating comments.
    *
-   * @param comment A comment bound to the request body
+   * @param comment   A comment bound to the request body
    * @param commentId UUID of comment which we want to update
    * @return ResponseEntity containing the updated requisition
    */
@@ -294,7 +295,7 @@ public class RequisitionController extends BaseController {
       return new ResponseEntity<>(value, HttpStatus.OK);
     } catch (RestClientException ex) {
       ErrorResponse errorResponse =
-            new ErrorResponse("An error accurred while updating comment", ex.getMessage());
+          new ErrorResponse("An error accurred while updating comment", ex.getMessage());
       LOGGER.error(errorResponse.getMessage(), ex);
       return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
@@ -334,8 +335,8 @@ public class RequisitionController extends BaseController {
         commentRepository.delete(comment);
       } catch (DataIntegrityViolationException ex) {
         ErrorResponse errorResponse =
-              new ErrorResponse("Comment cannot be deleted because of existing dependencies",
-                    ex.getMessage());
+            new ErrorResponse("Comment cannot be deleted because of existing dependencies",
+                ex.getMessage());
         LOGGER.error(errorResponse.getMessage(), ex);
         return new ResponseEntity(HttpStatus.CONFLICT);
       }
@@ -394,7 +395,7 @@ public class RequisitionController extends BaseController {
   public ResponseEntity<?> getSubmittedRequisitions() {
 
     Iterable<Requisition> submittedRequisitions = requisitionService.searchRequisitions(
-                null, null, null, null, null, null, RequisitionStatus.SUBMITTED);
+        null, null, null, null, null, null, RequisitionStatus.SUBMITTED);
     if (submittedRequisitions == null) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     } else {
@@ -406,8 +407,8 @@ public class RequisitionController extends BaseController {
    * Authorize given requisition.
    *
    * @param requisitionDto Requisition object to be authorized.
-   * @param bindingResult Object used for validation.
-   * @param requisitionId UUID of Requisition to authorize.
+   * @param bindingResult  Object used for validation.
+   * @param requisitionId  UUID of Requisition to authorize.
    * @return ResponseEntity with authorized Requisition if authorization was successful.
    */
   @RequestMapping(value = "/requisitions/{id}/authorize", method = RequestMethod.PUT)
@@ -421,11 +422,45 @@ public class RequisitionController extends BaseController {
     try {
       requisitionDto = requisitionService.authorize(requisitionId, requisitionDto,
           bindingResult.hasErrors());
-      LOGGER.info("Requisition: " +  requisitionId + " authorized.");
+      LOGGER.info("Requisition: " + requisitionId + " authorized.");
     } catch (RequisitionException ex) {
       LOGGER.debug(ex.getMessage(), ex);
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     return new ResponseEntity<>(requisitionDto, HttpStatus.OK);
   }
+
+  /**
+   * Get approved requisitions matching all of provided parameters.
+   *
+   * @param filterValue Value to be used to filter.
+   * @param filterBy Field used to filter: "programName", "facilityCode", "facilityName" or "all".
+   * @param sortBy Field used to sort: "programName", "facilityCode" or "facilityName".
+   * @param descending Descending direction for sort.
+   * @param pageNumber Page number to return.
+   * @param pageSize Quantity for one page.
+   *
+   * @return ResponseEntity with list of approved requisitions.
+   */
+  @RequestMapping(value = "/requisitions/approved/search", method = RequestMethod.GET)
+  public ResponseEntity<?> searchApprovedRequisitionsWithSortAndFilterAndPaging(
+      @RequestParam String filterValue,
+      @RequestParam String filterBy,
+      @RequestParam String sortBy,
+      @RequestParam Boolean descending,
+      @RequestParam Integer pageNumber,
+      @RequestParam Integer pageSize) {
+
+    // TODO Add filtering about available Requisition for user
+    // (If Reference Data Service - EBAC will be finished)
+    // TODO Add available supplying depot and filtering about this
+    // (If OLMIS-227 will be finished)
+
+    List<Requisition> approvedRequisitionList =
+        requisitionService.searchApprovedRequisitionsWithSortAndFilterAndPaging(
+            filterValue, filterBy, sortBy, descending, pageNumber, pageSize);
+
+    return new ResponseEntity<>(approvedRequisitionList, HttpStatus.OK);
+  }
+
 }
