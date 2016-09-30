@@ -28,6 +28,14 @@ public class OrderNumberConfigurationController extends BaseController {
   @RequestMapping(value = "/orderNumberConfigurations", method = RequestMethod.POST)
   public ResponseEntity<?> saveOrderNumberConfigurations(
       @RequestBody OrderNumberConfiguration orderNumberConfigurationDto) {
+
+    Iterator<OrderNumberConfiguration> it = orderNumberConfigurationRepository.findAll().iterator();
+
+    //If configuration already exists we override it instead of creating new one
+    if (it.hasNext()) {
+      orderNumberConfigurationDto.setId(it.next().getId());
+    }
+
     OrderNumberConfiguration orderNumberConfiguration =
         orderNumberConfigurationRepository.save(orderNumberConfigurationDto);
     return new ResponseEntity<>(orderNumberConfiguration, HttpStatus.OK);

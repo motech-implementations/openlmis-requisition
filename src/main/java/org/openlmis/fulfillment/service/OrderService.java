@@ -252,7 +252,7 @@ public class OrderService {
       ProgramDto program = programReferenceDataService.findOne(order.getProgram());
 
       order.setOrderCode(orderNumberConfiguration.generateOrderNumber(
-          requisition.getId(), program.getCode(), requisition.getEmergency()));
+          requisition, program));
 
       order.setQuotedCost(BigDecimal.ZERO);
 

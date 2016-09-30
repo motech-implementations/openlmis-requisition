@@ -39,7 +39,7 @@ public abstract class BaseWebIntegrationTest {
   protected static final RamlDefinition ramlDefinition =
       RamlLoaders.fromClasspath().load("api-definition-raml.yaml");
 
-  private static final String BASE_URL = System.getenv("BASE_URL");
+  protected static final String BASE_URL = System.getenv("BASE_URL");
 
   private static final String UUID_REGEX =
       "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
