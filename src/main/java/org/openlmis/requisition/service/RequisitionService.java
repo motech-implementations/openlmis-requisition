@@ -82,7 +82,7 @@ public class RequisitionService {
   public RequisitionDto getRequisition(UUID requisitionId) throws RequisitionNotFoundException {
     Requisition requisition = requisitionRepository.findOne(requisitionId);
     if (requisition == null) {
-      throw new RequisitionNotFoundException(requisitionId);
+      return null;
     }
     ProgramDto program = programReferenceDataService
         .findOne(requisition.getProgram());
@@ -92,6 +92,7 @@ public class RequisitionService {
         .findOne(requisition.getProcessingPeriod());
 
     RequisitionDto requisitionDto = new RequisitionDto(
+        requisition.getId(),
         requisition.getCreatedDate(),
         requisition.getRequisitionLineItems(),
         requisition.getComments(),
