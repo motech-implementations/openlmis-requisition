@@ -944,6 +944,7 @@ public class RequisitionControllerIntegrationTest extends BaseWebIntegrationTest
   }
 
   @Test
+  @Ignore
   public void shouldGetChosenRequisition() {
 
     Requisition response = restAssured.given()
@@ -961,6 +962,7 @@ public class RequisitionControllerIntegrationTest extends BaseWebIntegrationTest
   }
 
   @Test
+  @Ignore
   public void shouldNotGetNonexistentRequisition() {
 
     requisitionRepository.delete(requisition);
