@@ -30,6 +30,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -158,7 +159,9 @@ public class Requisition extends BaseEntity {
   }
 
   private void updateReqLines(Collection<RequisitionLineItem> lineItems) {
-    if (requisitionLineItems == null) 
+    if (requisitionLineItems == null) {
+      requisitionLineItems = new ArrayList<>();
+    }
     requisitionLineItems.clear();
     requisitionLineItems.addAll(lineItems);
   }
