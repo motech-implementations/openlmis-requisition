@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -144,9 +145,7 @@ public class Requisition extends BaseEntity {
     this.comments = requisition.getComments();
     this.supervisoryNodeId = requisition.getSupervisoryNodeId();
 
-    if (null != requisitionLineItems) {
-      updateReqLines(requisition.getRequisitionLineItems());
-    }
+    updateReqLines(requisition.getRequisitionLineItems());
 
     try {
       if (requisitionTemplate.isColumnCalculated("stockOnHand")) {
@@ -163,19 +162,28 @@ public class Requisition extends BaseEntity {
   }
 
   private void updateReqLines(Collection<RequisitionLineItem> lineItems) {
+    if (null == requisitionLineItems) {
+      this.requisitionLineItems = new ArrayList<>();
+    }
+
+    List<RequisitionLineItem> updatedList = new ArrayList<>();
+
     for (RequisitionLineItem item : lineItems) {
-      RequisitionLineItem exist = requisitionLineItems
+      RequisitionLineItem existing = requisitionLineItems
           .stream()
           .filter(l -> l.getId().equals(item.getId()))
           .findFirst().orElse(null);
 
-      if (null == exist) {
-        item.setRequisition(this);
-        requisitionLineItems.add(item);
+      if (null == existing) {
+        updatedList.add(item);
       } else {
-        exist.updateFrom(item);
+        existing.updateFrom(item);
+        updatedList.add(existing);
       }
     }
+
+    this.requisitionLineItems.clear();
+    this.requisitionLineItems.addAll(updatedList);
   }
 
   /**
