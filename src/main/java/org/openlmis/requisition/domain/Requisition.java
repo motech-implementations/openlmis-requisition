@@ -6,9 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 import org.hibernate.annotations.Type;
 import org.openlmis.fulfillment.utils.LocalDateTimePersistenceConverter;
 import org.openlmis.requisition.exception.InvalidRequisitionStatusException;
@@ -18,6 +16,15 @@ import org.openlmis.requisition.exception.RequisitionTemplateColumnException;
 import org.openlmis.requisition.web.RequisitionController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -29,11 +36,6 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "requisitions")
@@ -142,7 +144,9 @@ public class Requisition extends BaseEntity {
     this.comments = requisition.getComments();
     this.supervisoryNodeId = requisition.getSupervisoryNodeId();
 
-    updateReqLines(requisition.getRequisitionLineItems());
+    if (null != requisitionLineItems) {
+      updateReqLines(requisition.getRequisitionLineItems());
+    }
 
     try {
       if (requisitionTemplate.isColumnCalculated("stockOnHand")) {
@@ -159,11 +163,19 @@ public class Requisition extends BaseEntity {
   }
 
   private void updateReqLines(Collection<RequisitionLineItem> lineItems) {
-    if (requisitionLineItems == null) {
-      requisitionLineItems = new ArrayList<>();
+    for (RequisitionLineItem item : lineItems) {
+      RequisitionLineItem exist = requisitionLineItems
+          .stream()
+          .filter(l -> l.getId().equals(item.getId()))
+          .findFirst().orElse(null);
+
+      if (null == exist) {
+        item.setRequisition(this);
+        requisitionLineItems.add(item);
+      } else {
+        exist.updateFrom(item);
+      }
     }
-    requisitionLineItems.clear();
-    requisitionLineItems.addAll(lineItems);
   }
 
   /**
