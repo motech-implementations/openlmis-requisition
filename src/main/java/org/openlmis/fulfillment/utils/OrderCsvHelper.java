@@ -9,9 +9,7 @@ import org.openlmis.fulfillment.domain.Order;
 import org.openlmis.fulfillment.domain.OrderFileColumn;
 import org.openlmis.fulfillment.domain.OrderFileTemplate;
 import org.openlmis.requisition.domain.RequisitionLineItem;
-import org.openlmis.requisition.dto.FacilityDto;
-import org.openlmis.requisition.dto.OrderableProductDto;
-import org.openlmis.requisition.dto.ProcessingPeriodDto;
+import org.openlmis.requisition.service.referencedata.BaseReferenceDataService;
 import org.openlmis.requisition.service.referencedata.FacilityReferenceDataService;
 import org.openlmis.requisition.service.referencedata.OrderableProductReferenceDataService;
 import org.openlmis.requisition.service.referencedata.PeriodReferenceDataService;
@@ -154,32 +152,46 @@ public class OrderCsvHelper {
   }
 
   private Object getRelatedColumnValue(UUID relatedId, OrderFileColumn orderFileColumn) {
-    if (relatedId == null) {
+    boolean isPossibleToFindRelatedColumnValue = (relatedId != null
+        && orderFileColumn.getRelated() != null && orderFileColumn.getRelatedKeyPath() != null);
+    if (!isPossibleToFindRelatedColumnValue) {
       return null;
     }
 
+    BaseReferenceDataService referenceDataService =
+        getProperReferenceDataService(orderFileColumn.getRelated());
     Object columnValue;
-
-    switch (orderFileColumn.getRelated()) {
-      case FACILITY:
-        FacilityDto facility = facilityReferenceDataService.findOne(relatedId);
-        columnValue = getValue(facility, orderFileColumn.getRelatedKeyPath());
-        break;
-      case PRODUCT:
-        OrderableProductDto product = orderableProductReferenceDataService.findOne(relatedId);
-        columnValue = getValue(product, orderFileColumn.getRelatedKeyPath());
-        break;
-      case PERIOD:
-        ProcessingPeriodDto period = periodReferenceDataService.findOne(relatedId);
-        columnValue = getValue(period, orderFileColumn.getRelatedKeyPath());
-        break;
-      default:
-        columnValue = null;
-        break;
+    if (referenceDataService != null) {
+      Object dtoForRelatedId = referenceDataService.findOne(relatedId);
+      columnValue = dtoForRelatedId != null
+          ? getValue(dtoForRelatedId, orderFileColumn.getRelatedKeyPath()) : null;
+    } else {
+      columnValue = null;
     }
 
     return columnValue;
   }
+
+  private BaseReferenceDataService getProperReferenceDataService(
+      String orderFileColumnRelatedType) {
+    BaseReferenceDataService referenceDataService;
+    switch (orderFileColumnRelatedType) {
+      case FACILITY:
+        referenceDataService = facilityReferenceDataService;
+        break;
+      case PRODUCT:
+        referenceDataService = orderableProductReferenceDataService;
+        break;
+      case PERIOD:
+        referenceDataService = periodReferenceDataService;
+        break;
+      default:
+        referenceDataService = null;
+        break;
+    }
+    return referenceDataService;
+  }
+
 
   private Object getValue(Object object, String keyPath) {
     JXPathContext context = JXPathContext.newContext(object);
