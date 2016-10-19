@@ -191,15 +191,16 @@ public class RequisitionController extends BaseController {
   /**
    * Allows updating requisitions.
    *
-   * @param requisition A requisition bound to the request body
+   * @param requisitionDto A requisitionDto bound to the request body
    * @param requisitionId UUID of requisition which we want to update
    * @return ResponseEntity containing the updated requisition
    */
   @RequestMapping(value = "/requisitions/{id}", method = RequestMethod.PUT)
-  public ResponseEntity<?> updateRequisition(@RequestBody Requisition requisition,
+  public ResponseEntity<?> updateRequisition(@RequestBody RequisitionDto requisitionDto,
                                        @PathVariable("id") UUID requisitionId)
       throws InvalidRequisitionStatusException, RequisitionNotFoundException {
 
+    Requisition requisition = Requisition.newRequisition(requisitionDto);
     Requisition requisitionToUpdate = requisitionRepository.findOne(requisitionId);
 
     if (requisitionToUpdate == null) {

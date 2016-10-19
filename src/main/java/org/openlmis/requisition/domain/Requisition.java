@@ -9,6 +9,11 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 import org.hibernate.annotations.Type;
 import org.openlmis.fulfillment.utils.LocalDateTimePersistenceConverter;
+import org.openlmis.requisition.dto.CommentDto;
+import org.openlmis.requisition.dto.FacilityDto;
+import org.openlmis.requisition.dto.ProcessingPeriodDto;
+import org.openlmis.requisition.dto.ProgramDto;
+import org.openlmis.requisition.dto.RequisitionLineItemDto;
 import org.openlmis.requisition.exception.InvalidRequisitionStatusException;
 import org.openlmis.requisition.exception.RequisitionException;
 import org.openlmis.requisition.exception.RequisitionInitializationException;
@@ -72,6 +77,7 @@ public class Requisition extends BaseEntity {
 
   @OneToMany(mappedBy = "requisition", cascade = CascadeType.REMOVE)
   @Getter
+  @Setter
   private List<Comment> comments;
 
   @Getter
@@ -276,6 +282,103 @@ public class Requisition extends BaseEntity {
   public void forEachLine(Consumer<RequisitionLineItem> consumer) {
     Optional.ofNullable(requisitionLineItems)
         .ifPresent(list -> list.forEach(consumer));
+  }
+
+  /**
+   * Creates new requisition object based on data from {@link Importer}
+   *
+   * @param importer instance of {@link Importer}
+   * @return new instance of requisition.
+   */
+  public static Requisition newRequisition(Importer importer) {
+    Requisition requisition = new Requisition();
+    requisition.setId(importer.getId());
+    requisition.setCreatedDate(importer.getCreatedDate());
+    requisition.setFacilityId(importer.getFacility());
+    requisition.setProgramId(importer.getProgram());
+    requisition.setProcessingPeriodId(importer.getProcessingPeriod());
+    requisition.setStatus(importer.getStatus());
+    requisition.setEmergency(importer.getEmergency());
+    requisition.setSupplyingFacilityId(importer.getSupplyingFacility());
+    requisition.setSupervisoryNodeId(importer.getSupervisoryNode());
+
+    if (importer.getRequisitionLineItems() != null) {
+      requisition.setRequisitionLineItems(RequisitionLineItem.newRequisitionLineItem(importer
+          .getRequisitionLineItems())); //TODO add static constructor using importer to Requisition
+      // Line Item
+    }
+
+    if (importer.getComments() != null) {
+      requisition.setComments(Comment.newComment(importer.getComments()));
+      //TODO add a static constructor using importer to Comment
+    }
+  }
+
+  /**
+   * Export this object to the specified exporter (DTO).
+   *
+   * @param exporter exporter to export to
+   */
+  public void export(Requisition.Exporter exporter) {
+    exporter.setId(id);
+    exporter.setCreatedDate(createdDate);
+    exporter.setRequisitionLineItems(requisitionLineItems);
+    exporter.setComments(comments);
+    exporter.setFacility(facilityId);
+    exporter.setProgram(programId);
+    exporter.setProcessingPeriod(processingPeriodId);
+    exporter.setStatus(status);
+    exporter.setEmergency(emergency);
+    exporter.setSupplyingFacility(supplyingFacilityId);
+    exporter.setSupervisoryNode(supervisoryNodeId);
+  }
+
+  public interface Exporter {
+    void setId(UUID id);
+
+    void setCreatedDate(LocalDateTime createdDate);
+
+    void setRequisitionLineItems(List<RequisitionLineItem> requisitionLineItems);
+
+    void setComments(List<Comment> comments);
+
+    void setFacility(UUID facility);
+
+    void setProgram(UUID program);
+
+    void setProcessingPeriod(UUID processingPeriod);
+
+    void setStatus(RequisitionStatus status);
+
+    void setEmergency(Boolean emergency);
+
+    void setSupplyingFacility(UUID supplyingFacility);
+
+    void setSupervisoryNode(UUID supervisoryNode);
+  }
+
+  public interface Importer {
+    UUID getId();
+
+    LocalDateTime getCreatedDate();
+
+    List<RequisitionLineItem.Importer> getRequisitionLineItems();
+
+    Comment.Importer getComments();
+
+    UUID getFacility();
+
+    UUID getProgram();
+
+    UUID getProcessingPeriod();
+
+    RequisitionStatus getStatus();
+
+    Boolean getEmergency();
+
+    UUID getSupplyingFacility();
+
+    UUID getSupervisoryNode();
   }
 
 }
