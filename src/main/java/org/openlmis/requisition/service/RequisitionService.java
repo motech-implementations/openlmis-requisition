@@ -2,6 +2,7 @@ package org.openlmis.requisition.service;
 
 
 import org.openlmis.requisition.domain.Requisition;
+import org.openlmis.requisition.domain.RequisitionDtoBuilder;
 import org.openlmis.requisition.domain.RequisitionLineItem;
 import org.openlmis.requisition.domain.RequisitionStatus;
 import org.openlmis.requisition.domain.RequisitionTemplate;
@@ -82,7 +83,8 @@ public class RequisitionService {
   @Autowired
   private UserFulfillmentFacilitiesReferenceDataService fulfillmentFacilitiesReferenceDataService;
 
-
+  @Autowired
+  private RequisitionDtoBuilder requisitionDtoBuilder;
 
   /**
    * Return list of requisitionDtos with information about facility, program and period.
@@ -116,7 +118,7 @@ public class RequisitionService {
     if (requisition == null) {
       return null;
     }
-    RequisitionDto requisitionDto =  new RequisitionDto();
+    RequisitionDto requisitionDto =  requisitionDtoBuilder.build(requisition);
     requisition.export(requisitionDto);
     return requisitionDto;
 
