@@ -119,7 +119,6 @@ public class RequisitionService {
       return null;
     }
     RequisitionDto requisitionDto =  requisitionDtoBuilder.build(requisition);
-    requisition.export(requisitionDto);
     return requisitionDto;
 
   }
