@@ -4,12 +4,9 @@ package org.openlmis.requisition.repository.custom.impl;
 import org.openlmis.requisition.domain.Requisition;
 import org.openlmis.requisition.domain.RequisitionDtoBuilder;
 import org.openlmis.requisition.domain.RequisitionStatus;
-import org.openlmis.requisition.dto.CommentDto;
 import org.openlmis.requisition.dto.FacilityDto;
-import org.openlmis.requisition.dto.ProcessingPeriodDto;
 import org.openlmis.requisition.dto.ProgramDto;
 import org.openlmis.requisition.dto.RequisitionDto;
-import org.openlmis.requisition.dto.RequisitionLineItemDto;
 import org.openlmis.requisition.repository.custom.RequisitionRepositoryCustom;
 import org.openlmis.requisition.service.RequisitionCommentService;
 import org.openlmis.requisition.service.RequisitionLineCalculationService;
@@ -51,6 +48,9 @@ public class RequisitionRepositoryImpl implements RequisitionRepositoryCustom {
 
   @Autowired
   private RequisitionCommentService requisitionCommentService;
+
+  @Autowired
+  private RequisitionDtoBuilder requisitionDtoBuilder;
 
 
   @PersistenceContext
@@ -232,10 +232,9 @@ public class RequisitionRepositoryImpl implements RequisitionRepositoryCustom {
   private List<RequisitionDto> convertRequisitionListToRequisitionDtoList(
       List<Requisition> requisitions) {
     List<RequisitionDto> requisitionsConvertedToDto = new ArrayList<>();
-    RequisitionDtoBuilder builder = new RequisitionDtoBuilder();
 
     for (Requisition requisition : requisitions) {
-      RequisitionDto requisitionDto = builder.build(requisition);
+      RequisitionDto requisitionDto = requisitionDtoBuilder.build(requisition);
       requisitionsConvertedToDto.add(requisitionDto);
     }
 
