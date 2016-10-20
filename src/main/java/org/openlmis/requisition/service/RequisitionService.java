@@ -2,6 +2,7 @@ package org.openlmis.requisition.service;
 
 
 import org.openlmis.requisition.domain.Requisition;
+import org.openlmis.requisition.domain.RequisitionBuilder;
 import org.openlmis.requisition.domain.RequisitionDtoBuilder;
 import org.openlmis.requisition.domain.RequisitionLineItem;
 import org.openlmis.requisition.domain.RequisitionStatus;
@@ -134,7 +135,7 @@ public class RequisitionService {
   public Requisition initiate(UUID programId, UUID facilityId, UUID suggestedPeriodId,
                               Boolean emergency)
       throws RequisitionException, RequisitionTemplateColumnException {
-    Requisition requisition = Requisition.newRequisition(programId, facilityId, emergency);
+    Requisition requisition = RequisitionBuilder.newRequisition(programId, facilityId, emergency);
     requisition.setStatus(RequisitionStatus.INITIATED);
 
     FacilityDto facility = facilityReferenceDataService.findOne(facilityId);

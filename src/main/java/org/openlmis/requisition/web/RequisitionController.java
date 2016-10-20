@@ -4,6 +4,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import org.openlmis.requisition.domain.Requisition;
+import org.openlmis.requisition.domain.RequisitionBuilder;
 import org.openlmis.requisition.domain.RequisitionStatus;
 import org.openlmis.requisition.domain.RequisitionTemplate;
 import org.openlmis.requisition.dto.FacilityDto;
@@ -200,7 +201,7 @@ public class RequisitionController extends BaseController {
                                        @PathVariable("id") UUID requisitionId)
       throws InvalidRequisitionStatusException, RequisitionNotFoundException {
 
-    Requisition requisition = Requisition.newRequisition(requisitionDto);
+    Requisition requisition = RequisitionBuilder.newRequisition(requisitionDto);
     Requisition requisitionToUpdate = requisitionRepository.findOne(requisitionId);
 
     if (requisitionToUpdate == null) {

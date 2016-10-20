@@ -16,7 +16,6 @@ import org.openlmis.requisition.dto.ProgramDto;
 import org.openlmis.requisition.dto.RequisitionLineItemDto;
 import org.openlmis.requisition.exception.InvalidRequisitionStatusException;
 import org.openlmis.requisition.exception.RequisitionException;
-import org.openlmis.requisition.exception.RequisitionInitializationException;
 import org.openlmis.requisition.exception.RequisitionTemplateColumnException;
 import org.openlmis.requisition.web.RequisitionController;
 import org.slf4j.Logger;
@@ -49,7 +48,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "requisitions")
 @NoArgsConstructor
-@SuppressWarnings("PMD.TooManyMethods")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Requisition extends BaseEntity {
 
@@ -120,66 +118,6 @@ public class Requisition extends BaseEntity {
   @PrePersist
   private void prePersist() {
     this.createdDate = LocalDateTime.now();
-  }
-
-  /**
-   * Create a new instance of Requisition with given program and facility IDs and emergency flag.
-   *
-   * @param programId  UUID of program
-   * @param facilityId UUID of facility
-   * @param emergency  flag
-   * @return a new instance of Requisition
-   * @throws RequisitionInitializationException if any of arguments is {@code null}
-   */
-  public static Requisition newRequisition(UUID programId, UUID facilityId, Boolean emergency)
-      throws RequisitionInitializationException {
-    if (facilityId == null || programId == null || emergency == null) {
-      throw new RequisitionInitializationException(
-          "Requisition cannot be initiated with null id"
-      );
-    }
-
-    Requisition requisition = new Requisition();
-    requisition.setEmergency(emergency);
-    requisition.setFacilityId(facilityId);
-    requisition.setProgramId(programId);
-
-    return requisition;
-  }
-
-  /**
-   * Creates new requisition object based on data from {@link Requisition.Importer}
-   *
-   * @param importer instance of {@link Importer}
-   * @return new instance of requisition.
-   */
-  public static Requisition newRequisition(Requisition.Importer importer) {
-    Requisition requisition = new Requisition();
-    requisition.setId(importer.getId());
-    requisition.setCreatedDate(importer.getCreatedDate());
-    requisition.setFacilityId(importer.getFacility().getId());
-    requisition.setProgramId(importer.getProgram().getId());
-    requisition.setProcessingPeriodId(importer.getProcessingPeriod().getId());
-    requisition.setStatus(importer.getStatus());
-    requisition.setEmergency(importer.getEmergency());
-    requisition.setSupplyingFacilityId(importer.getSupplyingFacility());
-    requisition.setSupervisoryNodeId(importer.getSupervisoryNode());
-
-    if (importer.getRequisitionLineItems() != null) {
-      for (RequisitionLineItem.Importer requisitionLineItem : importer.getRequisitionLineItems()) {
-        requisition.getRequisitionLineItems().add(
-            RequisitionLineItem.newRequisitionLineItem(requisitionLineItem)
-        );
-      }
-    }
-
-    if (importer.getComments() != null) {
-      for (Comment.Importer comment : importer.getComments()) {
-        requisition.getComments().add(Comment.newComment(comment));
-      }
-    }
-
-    return requisition;
   }
 
   /**

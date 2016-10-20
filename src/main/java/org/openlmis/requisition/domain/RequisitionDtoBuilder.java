@@ -1,6 +1,5 @@
 package org.openlmis.requisition.domain;
 
-
 import org.openlmis.requisition.dto.CommentDto;
 import org.openlmis.requisition.dto.RequisitionDto;
 import org.openlmis.requisition.dto.RequisitionLineItemDto;
@@ -14,9 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-
 @Component
 public class RequisitionDtoBuilder {
+
   @Autowired
   private FacilityReferenceDataService facilityReferenceDataService;
 
