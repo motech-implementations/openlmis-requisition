@@ -1,8 +1,6 @@
 package org.openlmis.requisition.dto;
 
-import org.openlmis.requisition.domain.Comment;
 import org.openlmis.requisition.domain.Requisition;
-import org.openlmis.requisition.domain.RequisitionLineItem;
 import org.openlmis.requisition.domain.RequisitionStatus;
 
 import lombok.AllArgsConstructor;
@@ -10,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,19 +27,4 @@ public class RequisitionDto implements Requisition.Importer, Requisition.Exporte
   private UUID supplyingFacility;
   private UUID supervisoryNode;
 
-
-
-  @Override
-  public List<CommentDto> getComments() {
-    List<CommentDto> comments = new ArrayList<>();
-    comments.addAll(this.comments);
-    return comments;
-  }
-
-  @Override
-  public List<RequisitionLineItemDto> getRequisitionLineItems() {
-    List<RequisitionLineItemDto> requisitionLineItems = new ArrayList<>();
-    requisitionLineItems.addAll(this.requisitionLineItems);
-    return requisitionLineItems;
-  }
 }

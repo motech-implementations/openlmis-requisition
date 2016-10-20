@@ -1,7 +1,6 @@
 package org.openlmis.requisition.domain;
 
 import org.hibernate.annotations.Type;
-import org.hibernate.classic.Lifecycle;
 import org.openlmis.requisition.dto.FacilityTypeApprovedProductDto;
 import org.openlmis.requisition.dto.OrderableProductDto;
 
@@ -9,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;

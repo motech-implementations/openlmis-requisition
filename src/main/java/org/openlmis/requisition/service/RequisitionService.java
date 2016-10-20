@@ -60,9 +60,6 @@ public class RequisitionService {
   private RequisitionLineCalculationService requisitionLineCalculationService;
 
   @Autowired
-  private RequisitionCommentService requisitionCommentService;
-
-  @Autowired
   private ProgramReferenceDataService programReferenceDataService;
 
   @Autowired

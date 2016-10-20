@@ -8,10 +8,7 @@ import org.openlmis.requisition.dto.FacilityDto;
 import org.openlmis.requisition.dto.ProgramDto;
 import org.openlmis.requisition.dto.RequisitionDto;
 import org.openlmis.requisition.repository.custom.RequisitionRepositoryCustom;
-import org.openlmis.requisition.service.RequisitionCommentService;
-import org.openlmis.requisition.service.RequisitionLineCalculationService;
 import org.openlmis.requisition.service.referencedata.FacilityReferenceDataService;
-import org.openlmis.requisition.service.referencedata.PeriodReferenceDataService;
 import org.openlmis.requisition.service.referencedata.ProgramReferenceDataService;
 import org.openlmis.utils.RequisitionDtoComparator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,15 +36,6 @@ public class RequisitionRepositoryImpl implements RequisitionRepositoryCustom {
 
   @Autowired
   private ProgramReferenceDataService programReferenceDataService;
-
-  @Autowired
-  private PeriodReferenceDataService processingPeriodReferenceDataService;
-
-  @Autowired
-  private RequisitionLineCalculationService requisitionLineCalculationService;
-
-  @Autowired
-  private RequisitionCommentService requisitionCommentService;
 
   @Autowired
   private RequisitionDtoBuilder requisitionDtoBuilder;

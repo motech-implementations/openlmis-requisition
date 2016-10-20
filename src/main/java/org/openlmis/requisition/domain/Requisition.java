@@ -49,6 +49,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "requisitions")
 @NoArgsConstructor
+@SuppressWarnings("PMD.TooManyMethods")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Requisition extends BaseEntity {
 
@@ -318,8 +319,6 @@ public class Requisition extends BaseEntity {
     Optional.ofNullable(requisitionLineItems)
         .ifPresent(list -> list.forEach(consumer));
   }
-
-
 
   /**
    * Export this object to the specified exporter (DTO).
