@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -57,21 +56,18 @@ public class RequisitionDto implements Requisition.Importer, Requisition.Exporte
 
   @Override
   public void setFacility(UUID facilityId) {
-    this.facility = facilityReferenceDataService
-        .findOne(facilityId);
+    this.facility = facilityReferenceDataService.findOne(facilityId);
 
   }
 
   @Override
   public void setProcessingPeriod(UUID processingPeriodId) {
-    this.processingPeriod = periodReferenceDataService
-        .findOne(processingPeriodId);
+    this.processingPeriod = periodReferenceDataService.findOne(processingPeriodId);
   }
 
   @Override
   public void setProgram(UUID programId) {
-    this.program = programReferenceDataService
-        .findOne(programId);
+    this.program = programReferenceDataService.findOne(programId);
   }
 
   @Override
@@ -85,15 +81,15 @@ public class RequisitionDto implements Requisition.Importer, Requisition.Exporte
     this.requisitionLineItems = requisitionLineItemDtos;
   }
 
-  public UUID getFacility() {
+  public UUID getFacilityId() {
     return facility.getId();
   }
 
-  public UUID getProgram() {
+  public UUID getProgramId() {
     return program.getId();
   }
 
-  public UUID getProcessingPeriod() {
+  public UUID getProcessingPeriodId() {
     return processingPeriod.getId();
   }
 }

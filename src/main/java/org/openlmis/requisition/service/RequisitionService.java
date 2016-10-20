@@ -118,31 +118,10 @@ public class RequisitionService {
     if (requisition == null) {
       return null;
     }
-    ProgramDto program = programReferenceDataService
-        .findOne(requisition.getProgramId());
-    FacilityDto facility = facilityReferenceDataService
-        .findOne(requisition.getFacilityId());
-    ProcessingPeriodDto processingPeriod = periodReferenceDataService
-        .findOne(requisition.getProcessingPeriodId());
+    RequisitionDto requisitionDto =  new RequisitionDto();
+    requisition.export(requisitionDto);
+    return requisitionDto;
 
-    List<RequisitionLineItemDto> requisitionLineItemDtoList
-        = requisitionLineCalculationService.exportToDtos(requisition.getRequisitionLineItems());
-
-    List<CommentDto> commentDtoList = requisitionCommentService.exportToDtos(requisition
-        .getComments());
-
-    return new RequisitionDto(
-        requisition.getId(),
-        requisition.getCreatedDate(),
-        requisitionLineItemDtoList,
-        commentDtoList,
-        facility,
-        program,
-        processingPeriod,
-        requisition.getStatus(),
-        requisition.getEmergency(),
-        requisition.getSupplyingFacilityId(),
-        requisition.getSupervisoryNodeId());
   }
 
   /**

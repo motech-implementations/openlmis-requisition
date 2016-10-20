@@ -147,6 +147,41 @@ public class Requisition extends BaseEntity {
   }
 
   /**
+   * Creates new requisition object based on data from {@link Requisition.Importer}
+   *
+   * @param importer instance of {@link Importer}
+   * @return new instance of requisition.
+   */
+  public static Requisition newRequisition(Requisition.Importer importer) {
+    Requisition requisition = new Requisition();
+    requisition.setId(importer.getId());
+    requisition.setCreatedDate(importer.getCreatedDate());
+    requisition.setFacilityId(importer.getFacilityId());
+    requisition.setProgramId(importer.getProgramId());
+    requisition.setProcessingPeriodId(importer.getProcessingPeriodId());
+    requisition.setStatus(importer.getStatus());
+    requisition.setEmergency(importer.getEmergency());
+    requisition.setSupplyingFacilityId(importer.getSupplyingFacility());
+    requisition.setSupervisoryNodeId(importer.getSupervisoryNode());
+
+    if (importer.getRequisitionLineItems() != null) {
+      for (RequisitionLineItemDto requisitionLineItemDto : importer.getRequisitionLineItems()) {
+        requisition.getRequisitionLineItems().add(
+            RequisitionLineItem.newRequisitionLineItem(requisitionLineItemDto)
+        );
+      }
+    }
+
+    if (importer.getComments() != null) {
+      for (CommentDto commentDto : importer.getComments()) {
+        requisition.getComments().add(Comment.newComment(commentDto));
+      }
+    }
+
+    return requisition;
+  }
+
+  /**
    * Copy values of attributes into new or updated Requisition.
    *
    * @param requisition         Requisition with new values.
@@ -284,35 +319,7 @@ public class Requisition extends BaseEntity {
         .ifPresent(list -> list.forEach(consumer));
   }
 
-  /**
-   * Creates new requisition object based on data from {@link Importer}
-   *
-   * @param importer instance of {@link Importer}
-   * @return new instance of requisition.
-   */
-  public static Requisition newRequisition(Importer importer) {
-    Requisition requisition = new Requisition();
-    requisition.setId(importer.getId());
-    requisition.setCreatedDate(importer.getCreatedDate());
-    requisition.setFacilityId(importer.getFacility());
-    requisition.setProgramId(importer.getProgram());
-    requisition.setProcessingPeriodId(importer.getProcessingPeriod());
-    requisition.setStatus(importer.getStatus());
-    requisition.setEmergency(importer.getEmergency());
-    requisition.setSupplyingFacilityId(importer.getSupplyingFacility());
-    requisition.setSupervisoryNodeId(importer.getSupervisoryNode());
 
-    if (importer.getRequisitionLineItems() != null) {
-      requisition.setRequisitionLineItems(RequisitionLineItem.newRequisitionLineItem(importer
-          .getRequisitionLineItems())); //TODO add static constructor using importer to Requisition
-      // Line Item
-    }
-
-    if (importer.getComments() != null) {
-      requisition.setComments(Comment.newComment(importer.getComments()));
-      //TODO add a static constructor using importer to Comment
-    }
-  }
 
   /**
    * Export this object to the specified exporter (DTO).
@@ -362,15 +369,15 @@ public class Requisition extends BaseEntity {
 
     LocalDateTime getCreatedDate();
 
-    List<RequisitionLineItem.Importer> getRequisitionLineItems();
+    List<RequisitionLineItemDto> getRequisitionLineItems();
 
-    Comment.Importer getComments();
+    List<CommentDto> getComments();
 
-    UUID getFacility();
+    UUID getFacilityId();
 
-    UUID getProgram();
+    UUID getProgramId();
 
-    UUID getProcessingPeriod();
+    UUID getProcessingPeriodId();
 
     RequisitionStatus getStatus();
 

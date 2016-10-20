@@ -1,12 +1,15 @@
 package org.openlmis.requisition.domain;
 
 import org.hibernate.annotations.Type;
+import org.hibernate.classic.Lifecycle;
 import org.openlmis.requisition.dto.FacilityTypeApprovedProductDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
@@ -138,6 +141,31 @@ public class RequisitionLineItem extends BaseEntity {
 
   private int zeroIfNull(Integer value) {
     return null == value ? 0 : value;
+  }
+
+  /**
+   * Creates new instantion of RequisitionLineItem object based on data from
+   * {@link RequisitionLineItem.Importer}
+   *
+   * @param importer instance of {@link Importer}
+   * @return new instance od RequisitionLineItem.
+   */
+  public static RequisitionLineItem newRequisitionLineItem(Importer importer) {
+
+    RequisitionLineItem requisitionLineItem =  new RequisitionLineItem();
+    requisitionLineItem.setId(importer.getId());
+    requisitionLineItem.setBeginningBalance(importer.getBeginningBalance());
+    requisitionLineItem.setTotalReceivedQuantity(importer.getRequestedQuantity());
+    requisitionLineItem.setTotalLossesAndAdjustments(importer.getTotalLossesAndAdjustments());
+    requisitionLineItem.setStockOnHand(importer.getStockOnHand());
+    requisitionLineItem.setRequestedQuantity(importer.getRequestedQuantity());
+    requisitionLineItem.setTotalConsumedQuantity(importer.getTotalConsumedQuantity());
+    requisitionLineItem.setRequestedQuantityExplanation(importer.getRequestedQuantityExplanation());
+    requisitionLineItem.setRemarks(importer.getRemarks());
+    requisitionLineItem.setApprovedQuantity(importer.getApprovedQuantity());
+
+
+    return requisitionLineItem;
   }
 
   /**

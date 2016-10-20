@@ -235,23 +235,15 @@ public class RequisitionRepositoryImpl implements RequisitionRepositoryCustom {
     for (Requisition requisition : requisitions) {
       RequisitionDto requisitionDto = new RequisitionDto();
       requisitionDto.setId(requisition.getId());
-      List<RequisitionLineItemDto> requisitionLineItemDtoList
-          = requisitionLineCalculationService.exportToDtos(requisition.getRequisitionLineItems());
-      requisitionDto.setRequisitionLineItems(requisitionLineItemDtoList);
-      List<CommentDto> commentDtoList = requisitionCommentService.exportToDtos(requisition
-          .getComments());
-      requisitionDto.setComments(commentDtoList);
+      requisitionDto.setRequisitionLineItems(requisition.getRequisitionLineItems());
+      requisitionDto.setComments(requisition.getComments());
       requisitionDto.setStatus(requisition.getStatus());
       requisitionDto.setEmergency(requisition.getEmergency());
       requisitionDto.setSupervisoryNode(requisition.getSupervisoryNodeId());
       requisitionDto.setSupplyingFacility(requisition.getSupplyingFacilityId());
-      FacilityDto facilityDto = facilityReferenceDataService.findOne(requisition.getFacilityId());
-      requisitionDto.setFacility(facilityDto);
-      ProgramDto programDto = programReferenceDataService.findOne(requisition.getProgramId());
-      requisitionDto.setProgram(programDto);
-      ProcessingPeriodDto processingPeriodDto =
-          processingPeriodReferenceDataService.findOne(requisition.getProcessingPeriodId());
-      requisitionDto.setProcessingPeriod(processingPeriodDto);
+      requisitionDto.setFacility(requisition.getFacilityId());
+      requisitionDto.setProgram(requisition.getProgramId());
+      requisitionDto.setProcessingPeriod(requisition.getProcessingPeriodId());
       requisitionsConvertedToDto.add(requisitionDto);
     }
 
