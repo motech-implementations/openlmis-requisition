@@ -4,10 +4,6 @@ import org.openlmis.requisition.domain.Comment;
 import org.openlmis.requisition.domain.Requisition;
 import org.openlmis.requisition.domain.RequisitionLineItem;
 import org.openlmis.requisition.domain.RequisitionStatus;
-import org.openlmis.requisition.service.referencedata.FacilityReferenceDataService;
-import org.openlmis.requisition.service.referencedata.PeriodReferenceDataService;
-import org.openlmis.requisition.service.referencedata.ProgramReferenceDataService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,15 +30,6 @@ public class RequisitionDto implements Requisition.Importer, Requisition.Exporte
   private UUID supplyingFacility;
   private UUID supervisoryNode;
 
-  @Autowired
-  private FacilityReferenceDataService facilityReferenceDataService;
-
-  @Autowired
-  private PeriodReferenceDataService periodReferenceDataService;
-
-  @Autowired
-  private ProgramReferenceDataService programReferenceDataService;
-
   @Override
   public void setComments(List<Comment> comments) {
     List<CommentDto> commentDtos = new ArrayList<>();
@@ -55,20 +42,12 @@ public class RequisitionDto implements Requisition.Importer, Requisition.Exporte
   }
 
   @Override
-  public void setFacility(UUID facilityId) {
-    this.facility = facilityReferenceDataService.findOne(facilityId);
-
+  public List<Comment.Importer> getComments() {
+    List<Comment.Importer> comments = new ArrayList<>();
+    comments.addAll(this.comments);
+    return comments;
   }
 
-  @Override
-  public void setProcessingPeriod(UUID processingPeriodId) {
-    this.processingPeriod = periodReferenceDataService.findOne(processingPeriodId);
-  }
-
-  @Override
-  public void setProgram(UUID programId) {
-    this.program = programReferenceDataService.findOne(programId);
-  }
 
   @Override
   public void setRequisitionLineItems(List<RequisitionLineItem> requisitionLineItems) {
@@ -79,6 +58,13 @@ public class RequisitionDto implements Requisition.Importer, Requisition.Exporte
       requisitionLineItemDtos.add(requisitionLineItemDto);
     }
     this.requisitionLineItems = requisitionLineItemDtos;
+  }
+
+  @Override
+  public List<RequisitionLineItem.Importer> getRequisitionLineItems() {
+    List<RequisitionLineItem.Importer> requisitionLineItems = new ArrayList<>();
+    requisitionLineItems.addAll(this.requisitionLineItems);
+    return requisitionLineItems;
   }
 
   public UUID getFacilityId() {

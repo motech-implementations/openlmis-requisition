@@ -122,7 +122,7 @@ public class Requisition extends BaseEntity {
   }
 
   /**
-   * Createa a new instance of Requisition with given program and facility IDs and emergency flag.
+   * Create a new instance of Requisition with given program and facility IDs and emergency flag.
    *
    * @param programId  UUID of program
    * @param facilityId UUID of facility
@@ -165,16 +165,16 @@ public class Requisition extends BaseEntity {
     requisition.setSupervisoryNodeId(importer.getSupervisoryNode());
 
     if (importer.getRequisitionLineItems() != null) {
-      for (RequisitionLineItemDto requisitionLineItemDto : importer.getRequisitionLineItems()) {
+      for (RequisitionLineItem.Importer requisitionLineItem : importer.getRequisitionLineItems()) {
         requisition.getRequisitionLineItems().add(
-            RequisitionLineItem.newRequisitionLineItem(requisitionLineItemDto)
+            RequisitionLineItem.newRequisitionLineItem(requisitionLineItem)
         );
       }
     }
 
     if (importer.getComments() != null) {
-      for (CommentDto commentDto : importer.getComments()) {
-        requisition.getComments().add(Comment.newComment(commentDto));
+      for (Comment.Importer comment : importer.getComments()) {
+        requisition.getComments().add(Comment.newComment(comment));
       }
     }
 
@@ -331,9 +331,6 @@ public class Requisition extends BaseEntity {
     exporter.setCreatedDate(createdDate);
     exporter.setRequisitionLineItems(requisitionLineItems);
     exporter.setComments(comments);
-    exporter.setFacility(facilityId);
-    exporter.setProgram(programId);
-    exporter.setProcessingPeriod(processingPeriodId);
     exporter.setStatus(status);
     exporter.setEmergency(emergency);
     exporter.setSupplyingFacility(supplyingFacilityId);
@@ -349,12 +346,6 @@ public class Requisition extends BaseEntity {
 
     void setComments(List<Comment> comments);
 
-    void setFacility(UUID facility);
-
-    void setProgram(UUID program);
-
-    void setProcessingPeriod(UUID processingPeriod);
-
     void setStatus(RequisitionStatus status);
 
     void setEmergency(Boolean emergency);
@@ -369,9 +360,9 @@ public class Requisition extends BaseEntity {
 
     LocalDateTime getCreatedDate();
 
-    List<RequisitionLineItemDto> getRequisitionLineItems();
+    List<RequisitionLineItem.Importer> getRequisitionLineItems();
 
-    List<CommentDto> getComments();
+    List<Comment.Importer> getComments();
 
     UUID getFacilityId();
 
