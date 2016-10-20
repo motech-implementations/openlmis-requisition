@@ -30,52 +30,19 @@ public class RequisitionDto implements Requisition.Importer, Requisition.Exporte
   private UUID supplyingFacility;
   private UUID supervisoryNode;
 
-  @Override
-  public void setComments(List<Comment> comments) {
-    List<CommentDto> commentDtos = new ArrayList<>();
-    for (Comment comment: comments) {
-      CommentDto commentDto = new CommentDto();
-      comment.export(commentDto);
-      commentDtos.add(commentDto);
-    }
-    this.comments = commentDtos;
-  }
+
 
   @Override
-  public List<Comment.Importer> getComments() {
-    List<Comment.Importer> comments = new ArrayList<>();
+  public List<CommentDto> getComments() {
+    List<CommentDto> comments = new ArrayList<>();
     comments.addAll(this.comments);
     return comments;
   }
 
-
   @Override
-  public void setRequisitionLineItems(List<RequisitionLineItem> requisitionLineItems) {
-    List<RequisitionLineItemDto> requisitionLineItemDtos = new ArrayList<>();
-    for (RequisitionLineItem requisitionLineItem: requisitionLineItems) {
-      RequisitionLineItemDto requisitionLineItemDto = new RequisitionLineItemDto();
-      requisitionLineItem.export(requisitionLineItemDto);
-      requisitionLineItemDtos.add(requisitionLineItemDto);
-    }
-    this.requisitionLineItems = requisitionLineItemDtos;
-  }
-
-  @Override
-  public List<RequisitionLineItem.Importer> getRequisitionLineItems() {
-    List<RequisitionLineItem.Importer> requisitionLineItems = new ArrayList<>();
+  public List<RequisitionLineItemDto> getRequisitionLineItems() {
+    List<RequisitionLineItemDto> requisitionLineItems = new ArrayList<>();
     requisitionLineItems.addAll(this.requisitionLineItems);
     return requisitionLineItems;
-  }
-
-  public UUID getFacilityId() {
-    return facility.getId();
-  }
-
-  public UUID getProgramId() {
-    return program.getId();
-  }
-
-  public UUID getProcessingPeriodId() {
-    return processingPeriod.getId();
   }
 }

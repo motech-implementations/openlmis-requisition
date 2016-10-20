@@ -156,9 +156,9 @@ public class Requisition extends BaseEntity {
     Requisition requisition = new Requisition();
     requisition.setId(importer.getId());
     requisition.setCreatedDate(importer.getCreatedDate());
-    requisition.setFacilityId(importer.getFacilityId());
-    requisition.setProgramId(importer.getProgramId());
-    requisition.setProcessingPeriodId(importer.getProcessingPeriodId());
+    requisition.setFacilityId(importer.getFacility().getId());
+    requisition.setProgramId(importer.getProgram().getId());
+    requisition.setProcessingPeriodId(importer.getProcessingPeriod().getId());
     requisition.setStatus(importer.getStatus());
     requisition.setEmergency(importer.getEmergency());
     requisition.setSupplyingFacilityId(importer.getSupplyingFacility());
@@ -329,8 +329,6 @@ public class Requisition extends BaseEntity {
   public void export(Requisition.Exporter exporter) {
     exporter.setId(id);
     exporter.setCreatedDate(createdDate);
-    exporter.setRequisitionLineItems(requisitionLineItems);
-    exporter.setComments(comments);
     exporter.setStatus(status);
     exporter.setEmergency(emergency);
     exporter.setSupplyingFacility(supplyingFacilityId);
@@ -341,10 +339,6 @@ public class Requisition extends BaseEntity {
     void setId(UUID id);
 
     void setCreatedDate(LocalDateTime createdDate);
-
-    void setRequisitionLineItems(List<RequisitionLineItem> requisitionLineItems);
-
-    void setComments(List<Comment> comments);
 
     void setStatus(RequisitionStatus status);
 
@@ -360,15 +354,15 @@ public class Requisition extends BaseEntity {
 
     LocalDateTime getCreatedDate();
 
-    List<RequisitionLineItem.Importer> getRequisitionLineItems();
+    List<RequisitionLineItemDto> getRequisitionLineItems();
 
-    List<Comment.Importer> getComments();
+    List<CommentDto> getComments();
 
-    UUID getFacilityId();
+    FacilityDto getFacility();
 
-    UUID getProgramId();
+    ProgramDto getProgram();
 
-    UUID getProcessingPeriodId();
+    ProcessingPeriodDto getProcessingPeriod();
 
     RequisitionStatus getStatus();
 
